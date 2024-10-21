@@ -1,0 +1,56 @@
+---
+title: "Instructions"
+output: 
+  md_document:
+    variant: markdown
+---
+
+# **INSTRUCTIONS**
+
+1. Loading Necessary Libraries:
+   ```{r}
+   library(tidyverse)
+   library(cluster)
+   library(factoextra)
+   library(ggplot2)
+   ```
+  
+2. Loading the Data into Data named data frame:
+   ```{r}
+   data <- read.csv("D:/Important Files Study/Crop Recommendation Dataset work/Crop_recommendation.csv")
+   ```
+   
+3. Removing the 'label' feature from the dataset:
+   ```{r}
+   data <- data %>% select(-label)
+   ```
+   
+4. Scaling the features so it doesn't dominate other feature:
+   ```{r}
+   data_scaled <- scale(data)
+   #viewing dataset
+   View(data)
+   ```
+   
+5. Determining the number of Clusters:
+   ```{r}
+   #Setting seed 123 for reproductibilty
+   set.seed(123)
+   wss <- sapply(1:15, function(k){kmeans(data_scaled, k, nstart = 20)$tot.withinss})
+   plot(1:15, wss, type="b", pch = 19, frame = FALSE, xlab="Number of clusters K", ylab="Total within-clusters sum of squares")
+   ```
+   
+6. Application of K-means cluster:
+   ```{r}
+   set.seed(123)
+   #value of K=7 taken analyzing from elbpow plot
+   kmeans_result <- kmeans(data_scaled, centers = 7, nstart = 25)
+   #Adding cluster infromation to the original data
+   data$cluster <- as.factor(kmeans_result$cluster)
+   ```
+   
+7. Visualizing the Cluster:
+   ```{r}
+   fviz_cluster(kmeans_result, data = data_scaled)
+   ```
+   
